@@ -1,0 +1,104 @@
+<!-- SHY BUTTONS BY: MATHEUS.J.C -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quirky Web Page - Matheus</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+        overflow: hidden;
+      }
+
+      .button {
+        position: absolute;
+        padding: 15px 30px;
+        font-size: 18px;
+        background-color: #3498db;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="startButton" class="button">Play</button>
+
+    <script>
+      // Global variables
+      let soloButtonClicked = false;
+      let buttons = [];
+      let mouse = { x: 0, y: 0 };
+
+      // Event listener for the start button
+      document.getElementById("startButton").addEventListener("click", () => {
+        if (!soloButtonClicked) {
+          soloButtonClicked = true;
+          document.getElementById("startButton").style.display = "none";
+          createButton();
+          startMovingButton();
+        }
+      });
+
+      // Function to create a new button
+      function createButton() {
+        const button = document.createElement("button");
+        button.textContent = "Click Me!";
+        button.className = "button";
+        button.style.top = `${Math.random() * (window.innerHeight - 50)}px`; // Randomize position
+        button.style.left = `${Math.random() * (window.innerWidth - 150)}px`; // Randomize position
+        document.body.appendChild(button);
+        buttons.push(button);
+        button.addEventListener("click", () => {
+          button.style.backgroundColor = "red"; // Change background color to red
+          createTwoButtons();
+        });
+        button.addEventListener("mouseover", moveButton); // Add mouseover listener
+      }
+
+      // Function to create two more buttons
+      function createTwoButtons() {
+        createButton();
+        createButton();
+      }
+
+      // Function to move the button away from the mouse
+      function moveButton(event) {
+        const button = event.target;
+        const rect = button.getBoundingClientRect();
+        const dx = mouse.x - rect.left;
+        const dy = mouse.y - rect.top;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 150) {
+          // Adjust distance to mouse
+          const angle = Math.atan2(dy, dx);
+          const newX = rect.left - Math.cos(angle) * 10;
+          const newY = rect.top - Math.sin(angle) * 10;
+
+          // Ensure button stays within screen bounds
+          button.style.left = `${Math.max(0, Math.min(newX, window.innerWidth - rect.width))}px`;
+          button.style.top = `${Math.max(0, Math.min(newY, window.innerHeight - rect.height))}px`;
+        }
+      }
+
+      // Function to start moving buttons
+      function startMovingButton() {
+        document.addEventListener("mousemove", (event) => {
+          mouse.x = event.clientX;
+          mouse.y = event.clientY;
+          buttons.forEach((button) => moveButton({ target: button }));
+        });
+      }
+    </script>
+  </body>
+</html>
